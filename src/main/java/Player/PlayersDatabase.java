@@ -18,32 +18,33 @@ import java.util.Map;
 public class PlayersDatabase {
     //private static final ArrayList<PlayerPassword> database = new ArrayList<>();
     
-    private static final HashMap<Player, String > database = new HashMap<>();
+    private static final HashMap<MyPlayer, String > database = new HashMap<>();
     
     public PlayersDatabase()
     {
         //database.add(new PlayerPassword("aaa" , "1234"));
         //database.add(new PlayerPassword("bb"  , "1234"));
-        Player player1 = new Player("aaa");
+        int id = 0;
+        MyPlayer player1 = new MyPlayer("aaa", id++);
         database.put(player1, "1234");
-        Player player2 = new Player("bb");
+        MyPlayer player2 = new MyPlayer("bb", id++);
         database.put(player2, "1234");
     }
     
-    public static Player find(String nick, String password)
+    public static MyPlayer find(String nick, String password)
     {
         Iterator it = database.entrySet().iterator();
         while (it.hasNext()) 
         {
             Map.Entry pairs = (Map.Entry)it.next();
-            Player player = (Player)pairs.getKey();
+            MyPlayer player = (MyPlayer)pairs.getKey();
             if(player.getNick().equals(nick))
             {
                 String pass = (String)pairs.getValue();
                 if(pass.equals(password))
                     return player;
             }
-            it.remove(); // avoids a ConcurrentModificationException
+            //it.remove(); // avoids a ConcurrentModificationException
         }
         return null;
     }

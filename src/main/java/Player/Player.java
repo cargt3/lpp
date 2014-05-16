@@ -6,22 +6,28 @@
 
 package Player;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Karol
  */
-public class Player
+public class Player implements Serializable
     {
-        protected final String nick;
+        protected  String nick;
         //private final String password;  
-        protected final int id; //!!!!!!!!! TODO unikalny
-        private static int idNext = 0; 
+        protected  int id; //!!!!!!!!! TODO unikalny
+        //private static int idNext = 0; 
         
+        public Player()
+        {
+            
+        }
         
-        public Player(String nick)
+        public Player(String nick, int id)
         {
             this.nick = nick;
-            id = idNext++;
+            this.id = id;
             //this.password = password;
         }
         
@@ -43,15 +49,15 @@ public class Player
         @Override
         public String toString()
         {
-            return nick;
+            return id + " " + nick;
         }
         
         @Override 
         public boolean equals(Object o)
         {
-            if(o instanceof Player)
+            if(o instanceof MyPlayer)
             {
-                if(this.id == ((Player)o).id)
+                if(this.id == ((MyPlayer)o).id)
                     return true;
             }
             return false;

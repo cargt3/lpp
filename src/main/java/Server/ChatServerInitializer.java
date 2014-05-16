@@ -6,7 +6,7 @@
 
 package Server;
 
-import Player.Player;
+import Player.MyPlayer;
 import Protocol.Packet;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -38,11 +38,11 @@ class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
     int MAX_IDLE_TIME = 5;
     BlockingQueue<Pair> packetQueue; 
     
-    private final HashMap<Channel, Player> loged;// = new HashMap<Channel, Player>() {};
+    private final HashMap<Channel, MyPlayer> loged;// = new HashMap<Channel, MyPlayer>() {};
     private final List<ConnectedPlayer> connectedPlayers;// = new ArrayList<>();
     private final GameServer gameServer;
     
-    public ChatServerInitializer(BlockingQueue<Pair> packetQueue, HashMap<Channel, Player> loged,
+    public ChatServerInitializer(BlockingQueue<Pair> packetQueue, HashMap<Channel, MyPlayer> loged,
                                 List<ConnectedPlayer> connectedPlayers, GameServer gameServer)
     {
         this.packetQueue = packetQueue; 

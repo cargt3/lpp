@@ -6,7 +6,7 @@
 
 package ClientDataBase;
 
-import Player.Player;
+import Player.MyPlayer;
 import Player.PlayerInfo;
 import io.netty.channel.Channel;
 import java.util.ArrayList;
@@ -23,13 +23,25 @@ public class PlayersDataBase //loged players
     //HashMap<Integer, String> players = new HashMap<>();
     List<PlayerInfo> players = new ArrayList<>();
     
-//    public PlayerInfo getPlayer(int id)
-//    {
-//        for(PlayerInfo playerInfo : players)
-//        {
-//            if(playerInfo)
-//        }
-//    }
+    public void add(PlayerInfo player)
+    {
+        players.add(player);
+    }
+    
+    public void remove(PlayerInfo player)
+    {
+        players.remove(player);
+    }
+  
+    public PlayerInfo getPlayer(int id)
+    {
+        for(PlayerInfo playerInfo : players)
+        {
+            if(playerInfo.getId() == id)
+                return playerInfo;
+        }
+        return null;
+    }
     
     
 }

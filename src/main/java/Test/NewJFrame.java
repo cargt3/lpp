@@ -109,6 +109,8 @@ public class NewJFrame extends javax.swing.JFrame {
             case LOGIN_FAIL :
                 jLabel1.setText(receivedPacket.getSubPacket().toString());
                 break;
+            
+                
             default :
                 break;
             

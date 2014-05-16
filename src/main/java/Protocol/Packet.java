@@ -32,7 +32,7 @@ public class Packet implements Serializable{
         return seq;
     }
     
-    public Object getSubPacket()
+    public Serializable getSubPacket()
     {
         return subPacket;
     }

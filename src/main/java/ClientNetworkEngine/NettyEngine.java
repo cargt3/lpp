@@ -132,7 +132,11 @@ public class NettyEngine {
             if(packet != null)
             {
                 if( packet.getSeq() == seq)
-                    return packet;
+                {
+                    Serializable o = packet.getSubPacket();
+                    Packet tempPacket = new Packet(packet.getSeq(), packet.getPacketType(), o);
+                    return tempPacket;
+                }
                 if(packet.getSeq() == 0)
                     syncWithServer = false;
             }

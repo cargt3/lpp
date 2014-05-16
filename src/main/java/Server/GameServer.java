@@ -6,7 +6,8 @@
 
 package Server;
 
-import Player.Player;
+import Player.MyPlayer;
+import Player.PlayerInfo;
 import Player.PlayersDatabase;
 import Protocol.LoginPacket;
 import Protocol.MessagePacket;
@@ -28,10 +29,10 @@ import java.util.logging.Logger;
  * @author Karol
  */
 public class GameServer {
-    private final HashMap<Channel, Player> loged;
+    private final HashMap<Channel, MyPlayer> loged;
     private final List<ConnectedPlayer> connectedPlayers;
     
-    public GameServer(HashMap<Channel, Player> loged, List<ConnectedPlayer> connectedPlayers)
+    public GameServer(HashMap<Channel, MyPlayer> loged, List<ConnectedPlayer> connectedPlayers)
     {
         this.loged = loged;
         this.connectedPlayers = connectedPlayers;
@@ -60,7 +61,7 @@ public class GameServer {
     
     public void LogoutPlayer(Channel channel, Packet packet)
     {
-        Player player = loged.get(channel);
+        MyPlayer player = loged.get(channel);
         if(canPlayerBeLogout(player))
         {
             loged.remove(channel);
@@ -89,7 +90,7 @@ public class GameServer {
     private class forceLogoutPlayerThread implements Runnable
     {
         private final Channel channel;
-//        private final Player player;
+//        private final MyPlayer player;
         private final GameServer gameServer;
         
         public forceLogoutPlayerThread(Channel channel, GameServer gameServer)
@@ -112,9 +113,20 @@ public class GameServer {
     }
     
     
-    private boolean canPlayerBeLogout(Player player)
+    private boolean canPlayerBeLogout(MyPlayer player)
     {
         return true; ///!!! TODO
+    }
+    
+    private void syncWithPlayer(Channel channel)
+    {
+        int seqSync = 0; //TODO
+        for (Map.Entry entry : loged.entrySet()) 
+        {
+            channel.writeAndFlush(new Packet(seqSync, PacketType.PLAYER_LOGIN, new PlayerInfo((MyPlayer)entry.getValue())));
+            //System.out.println(entry.getKey() + "," + entry.getValue());
+        }
+        
     }
     
     public void LoginPlayer(Channel channel, Packet packet)
@@ -135,7 +147,7 @@ public class GameServer {
         
         LoginPacket loginPacket = (LoginPacket)packet.getSubPacket();
 
-        Player player = PlayersDatabase.find(loginPacket.getNick(), loginPacket.getPassword());
+        MyPlayer player = PlayersDatabase.find(loginPacket.getNick(), loginPacket.getPassword());
         if(player != null)
         {
             if(loged.containsValue(player))
@@ -147,6 +159,12 @@ public class GameServer {
             }
             loged.put(channel, player);
             channel.writeAndFlush((new Packet(packet.getSeq(), Protocol.PacketType.LOGIN_SUCCESS, "")));
+            syncWithPlayer(channel);
+            for(Channel logedChannel : loged.keySet())
+            {
+                PlayerInfo playerinfo = new PlayerInfo(player.getNick(), player.getId());
+                logedChannel.writeAndFlush(new Packet(0, PacketType.PLAYER_LOGIN,playerinfo));
+            }
             log("User successfully loged: " + player.getNick());
 
         }        

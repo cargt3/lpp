@@ -6,12 +6,16 @@
 
 package Test;
 
+import ClientDataBase.PlayersDataBase;
 import ClientNetworkEngine.ClientNetworkEngine;
+import Player.PlayerInfo;
 import Protocol.MessagePacket;
 import Protocol.Packet;
 import Protocol.Protocol;
 import Protocol.Protocol.PacketType;
 import io.netty.util.TimerTask;
+import java.io.Serializable;
+import java.util.Date;
 import java.util.Timer;
 
 /**
@@ -28,12 +32,19 @@ public class NewJPanel extends javax.swing.JPanel {
     public NewJPanel(ClientNetworkEngine clientNetworkEngine) {
         this.clientNetworkEngine = clientNetworkEngine;
         
-        Timer timer = new Timer();
-        timer.schedule(new Loop(), 0, 100);
+        
         
         initComponents();
+        Timer timer = new Timer();
+        timer.schedule(new Loop(), 0, 100);
     }
-
+    
+    PlayersDataBase playersDatabase = new PlayersDataBase();
+    
+    private void log(String str)
+    {
+        System.out.println("[Main]" + "[" + new Date() + "]" + str);
+    }
     
     private class Loop extends java.util.TimerTask 
     {
@@ -41,22 +52,29 @@ public class NewJPanel extends javax.swing.JPanel {
         @Override
         public void run() {
             Packet packet;
+            
             while((packet = clientNetworkEngine.nextPacket()) != null)
             {
-                //if(packet.getPacketType() == PacketType.MESSAGE_TO_ALL)
-                {
-                    switch(packet.getPacketType())
-                    {
-                        case MESSAGE_TO_ALL : 
-                            MessagePacket message = (MessagePacket)packet.getSubPacket();
-                            jTextArea1.append("[" + message.getPlayerId() + "]" + message.getMessage() + "\r\n");
-                            break;
-                        case LOGIN_REQUEST :
 
-                            break;
-                        default:
-                            break;
-                    }
+                switch(packet.getPacketType())
+                {
+                    case MESSAGE_TO_ALL : 
+                        MessagePacket message = (MessagePacket)packet.getSubPacket();
+                        jTextArea1.append("[" + playersDatabase.getPlayer(message.getPlayerId()).getNick()
+                                + "]" + message.getMessage() + "\r\n");
+                        break;
+                    case PLAYER_LOGIN :
+
+//                            Serializable o = (PlayerInfo)packet.getSubPacket();
+//                            //log(o.toString());
+//                            PlayerInfo playerInfo;
+
+                        PlayerInfo playerInfo = (PlayerInfo)packet.getSubPacket();
+                        playersDatabase.add(playerInfo);
+                        jTextArea1.append(playerInfo.getNick() + " has been loged" + "\r\n");    
+                        break;
+                    default:
+                        break;                   
                 }
             }
         }

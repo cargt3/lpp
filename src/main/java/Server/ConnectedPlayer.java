@@ -6,7 +6,7 @@
 
 package Server;
 
-import Player.Player;
+import Player.MyPlayer;
 import io.netty.channel.Channel;
 import java.util.Date;
 
@@ -19,13 +19,13 @@ public class ConnectedPlayer
     private static int last_id = 0;
     private int id;
     private final Channel channel;
-    private final Player player;
+    private final MyPlayer player;
     private long lastLoginRequest;//!!!!!!!!!!!!!
     private int loginNumberAttemps = 0;
     
     public static final int MIN_WAIT_TIME = 10; //sec
     
-    public ConnectedPlayer(Channel channel, Player player)
+    public ConnectedPlayer(Channel channel, MyPlayer player)
     {
         this.channel = channel;
         this.player = player;

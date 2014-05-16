@@ -10,7 +10,7 @@ package Server;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import Player.Player;
+import Player.MyPlayer;
 import Protocol.Packet;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,14 +24,14 @@ import java.util.concurrent.BlockingQueue;
 public class ChatServerHandler extends SimpleChannelInboundHandler//<String>
 {
 
-    private final HashMap<Channel, Player> loged;// = new HashMap<Channel, Player>() {};
+    private final HashMap<Channel, MyPlayer> loged;// = new HashMap<Channel, MyPlayer>() {};
     private final List<ConnectedPlayer> connectedPlayers;// = new ArrayList<>();
     private final GameServer gameServer;
     
     //GameServer gameServer = new GameServer(loged, connectedPlayers);
     BlockingQueue<Pair> packetQueue; 
     
-    public ChatServerHandler(BlockingQueue<Pair> packetQueue, HashMap<Channel, Player> loged,
+    public ChatServerHandler(BlockingQueue<Pair> packetQueue, HashMap<Channel, MyPlayer> loged,
                             List<ConnectedPlayer> connectedPlayers, GameServer gameServer)
     {
         this.packetQueue = packetQueue;

@@ -6,7 +6,7 @@
 
 package Server;
 
-import Player.Player;
+import Player.MyPlayer;
 import Player.PlayersDatabase;
 import Protocol.Packet;
 import io.netty.bootstrap.ServerBootstrap;
@@ -28,7 +28,7 @@ import java.util.concurrent.BlockingQueue;
 public class NettyServerEngine {
     
     BlockingQueue<Pair> packetQueue = new ArrayBlockingQueue<>(10000); ///!!!!!!
-    private final HashMap<Channel, Player> loged = new HashMap<>();
+    private final HashMap<Channel, MyPlayer> loged = new HashMap<>();
     private final List<ConnectedPlayer> connectedPlayers = new ArrayList<>();
     
     
