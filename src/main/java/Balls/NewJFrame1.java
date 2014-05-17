@@ -4,8 +4,14 @@
  * and open the template in the editor.
  */
 
-package Test;
+package Balls;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Timer;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -18,20 +24,120 @@ public class NewJFrame1 extends javax.swing.JFrame {
     /**
      * Creates new form NewJFrame1
      */
+    int GAME_SPEED = 10;
+    static final int BOARD_WIDTH = 600;
+    static final int BOARD_HIGHT = 400;
+    static final int WINDOW_WIDTH = BOARD_WIDTH + 100;
+    static final int WINDOW_HIGHT = BOARD_HIGHT + 50;
+    
+    List<Ball> balls = new ArrayList<>();
+    
+    JPanel panel = new game(balls);
+    
     public NewJFrame1() {
         super("Rysowanie");
-        JPanel panel = new game();
+        
  
         add(panel);
- 
+        setPreferredSize(new Dimension(WINDOW_WIDTH,WINDOW_HIGHT));
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        //setSize(BOARD_WIDTH, BOARD_HIGHT);
         setVisible(true);
-
-
         initComponents();
+        
+        createBalls(10);
+        
+        //balls.add(new Ball(random.nextInt(BOARD_WIDTH - Ball.r), 30, Color.RED));
+        
+        Timer timer = new Timer();
+        timer.schedule(new Loop(), 0, GAME_SPEED);
     }
     
+    private void createBalls(int n)
+    {
+        while(n != 0)
+        {
+            Random random = new Random();
+            Ball ball = new Ball((double)(random.nextInt(BOARD_WIDTH - 2 * Ball.r) + Ball.r), 
+                           (double)(random.nextInt(BOARD_HIGHT - 2*Ball.r) + Ball.r), Color.BLUE);
+            int t1 = random.nextInt(10);
+            int t2 = random.nextInt(10);
+            ball.vectorX = 1.0 + (double)(t1) / 10.0;
+            ball.vectorY = 1.0 + (double)(t2) / 10.0;
+            balls.add(ball);
+            n--;
+        }
+    }
+    
+    private class Loop extends java.util.TimerTask 
+    {
+
+        @Override
+        public void run() {
+            
+            for(Ball ball : balls)
+            {
+                move(ball);
+            }
+            panel.validate();
+            panel.repaint();
+        }
+        
+    }
+    void move(Ball ball)
+    {
+        if(ball.x + ball.vectorX + ball.width / 2 > BOARD_WIDTH)
+            ball.vectorX *= -1;
+        if(ball.x + ball.vectorX - ball.width / 2 < 0)
+            ball.vectorX *= -1;
+        if(ball.y + ball.vectorY + ball.hight / 2 > BOARD_HIGHT)
+            ball.vectorY *= -1;
+        if(ball.y + ball.vectorY - ball.hight / 2 < 0)
+            ball.vectorY *= -1;
+        ball.x += ball.vectorX;
+        ball.y += ball.vectorY;
+        
+        for(Ball ball1 : balls)
+        {
+            boolean sameHight = false, sameWidth = false;
+            if(ball == ball1)
+                continue;
+            if(ball.x == ball1.x || 
+             ((ball.x - ball.r < ball1.x + ball.r) && (ball.x - ball.r > ball1.x - ball.r)) || 
+             ((ball.x + ball.r > ball1.x - ball.r) && (ball.x + ball.r < ball1.x + ball.r)))
+            
+                sameWidth = true;
+            if(ball.y == ball1.y || 
+             ((ball.y - ball.r < ball1.y + ball.r) && (ball.y - ball.r > ball1.y - ball.r)) || 
+             ((ball.y + ball.r > ball1.y - ball.r) && (ball.y + ball.r < ball1.y + ball.r)))
+            
+                sameHight = true;
+            if(sameHight && sameWidth)
+                ball.color = Color.GRAY;
+        }
+        
+        
+        
+    }
+    public class Ball
+    {
+        double x;
+        double y;
+        double vectorX = 1;
+        double vectorY = 1;
+        int width = 20;
+        int hight = 20;
+        public static final int r = 10;
+        Color color;
+        public Ball(double x, double y, Color color)
+        {
+            this.x = x;
+            this.y = y;
+            this.color =  color;
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

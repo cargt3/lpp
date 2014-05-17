@@ -4,11 +4,16 @@
  * and open the template in the editor.
  */
 
-package Test;
+package Balls;
 
+import Balls.NewJFrame1.Ball;
+import static Balls.NewJFrame1.BOARD_HIGHT;
+import static Balls.NewJFrame1.BOARD_WIDTH;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.List;
 
 /**
  *
@@ -19,19 +24,29 @@ public class game extends javax.swing.JPanel {
     /**
      * Creates new form game
      */
-    public game() {
+    List<Ball> balls;
+    
+    public game(List<Ball> balls) {
         initComponents();
+        this.balls = balls;
+        setPreferredSize(new Dimension(BOARD_WIDTH,BOARD_HIGHT));
+        //setSize(BOARD_WIDTH, BOARD_HIGHT);
         this.setBackground(Color.white);
         
-        Graphics2D g2d = (Graphics2D) this.getGraphics();
         
-        g2d.setColor(Color.yellow);
-        g2d.fillOval(100, 100, 20, 20);
     }
     
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        super.paintComponent(g);               
+        Graphics2D g2d = (Graphics2D) g;
+        
+        g2d.drawRect(0, 0, NewJFrame1.BOARD_WIDTH, NewJFrame1.BOARD_HIGHT);
+        for(Ball ball : balls)
+        {
+            g2d.setColor(ball.color);
+            g2d.fillOval((int)(ball.x - (ball.width / 2)), (int)(ball.y - ball.hight / 2), ball.width , ball.hight);
+        }
         
         //g2d.fillRect(10, 10, 100, 100);
  
