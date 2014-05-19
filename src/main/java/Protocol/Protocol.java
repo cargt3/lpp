@@ -6,7 +6,6 @@
 
 package Protocol;
 
-import java.util.Arrays;
 
 /**
  *
@@ -18,7 +17,8 @@ public class Protocol {
     public enum PacketType {
         ERROR, SUCCES, MESSAGE_TO_ALL, LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAIL,
         PING, PING_REQUEST, PING_REPLY, DISCONNECTED, LOGOUT_REQUEST, LOGOUT, 
-        LOGOUT_SUCCES, LOGOUT_FAIL, PLAYER_LOGIN, PLAYER_LOGOUT
+        LOGOUT_SUCCES, LOGOUT_FAIL, PLAYER_LOGIN, PLAYER_LOGOUT, MOVE_REQUEST,
+        MOVE_REPLY,SYNC_PLAYER, BEGIN_SYNC, END_SYNC
         ;
         
         @Override

@@ -74,6 +74,9 @@ public class QueueThreat implements Runnable {
                 case PING :
                     log("Ping");
                     break;
+                case MOVE_REQUEST:
+                    gameServer.moveRequest(channel, packet);
+                    break;    
                 default:
                     //TODO
                     log("Unknown packet");

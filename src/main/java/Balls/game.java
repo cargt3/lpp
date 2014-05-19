@@ -9,6 +9,7 @@ package Balls;
 import Balls.NewJFrame1.Ball;
 import static Balls.NewJFrame1.BOARD_HIGHT;
 import static Balls.NewJFrame1.BOARD_WIDTH;
+import Player.Player;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -24,9 +25,9 @@ public class game extends javax.swing.JPanel {
     /**
      * Creates new form game
      */
-    List<Ball> balls;
+    List<Player> balls;
     
-    public game(List<Ball> balls) {
+    public game(List<Player> balls) {
         initComponents();
         this.balls = balls;
         setPreferredSize(new Dimension(BOARD_WIDTH,BOARD_HIGHT));
@@ -42,10 +43,10 @@ public class game extends javax.swing.JPanel {
         Graphics2D g2d = (Graphics2D) g;
         
         g2d.drawRect(0, 0, NewJFrame1.BOARD_WIDTH, NewJFrame1.BOARD_HIGHT);
-        for(Ball ball : balls)
+        for(Player ball : balls)
         {
-            g2d.setColor(ball.color);
-            g2d.fillOval((int)(ball.x - (ball.width / 2)), (int)(ball.y - ball.hight / 2), ball.width , ball.hight);
+            g2d.setColor(ball.getColor());
+            g2d.fillOval((int)(ball.getX() - (ball.getR() / 2)), (int)(ball.getY() - ball.getR() / 2), ball.getR() * 2 , ball.getR() * 2);
         }
         
         //g2d.fillRect(10, 10, 100, 100);

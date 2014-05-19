@@ -6,6 +6,16 @@
 
 package Balls;
 
+import ClientDataBase.PlayersDataBase;
+import ClientNetworkEngine.ClientNetworkEngine;
+import Player.Coordinates;
+import Player.MyPlayer;
+import Player.Player;
+import Player.PlayerInfo;
+import Protocol.MessagePacket;
+import Protocol.Packet;
+import Protocol.Protocol;
+import Protocol.Protocol.PacketType;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -24,13 +34,15 @@ public class NewJFrame1 extends javax.swing.JFrame {
     /**
      * Creates new form NewJFrame1
      */
-    int GAME_SPEED = 10;
+    int GAME_SPEED = 1;
     static final int BOARD_WIDTH = 600;
     static final int BOARD_HIGHT = 400;
     static final int WINDOW_WIDTH = BOARD_WIDTH + 100;
     static final int WINDOW_HIGHT = BOARD_HIGHT + 50;
     
-    List<Ball> balls = new ArrayList<>();
+    static ClientNetworkEngine clientNetworkEngine = new ClientNetworkEngine("localhost",8000);
+    
+    List<Player> balls = new ArrayList<>();
     
     JPanel panel = new game(balls);
     
@@ -43,11 +55,12 @@ public class NewJFrame1 extends javax.swing.JFrame {
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
+        clientNetworkEngine.LogIn("aaa", "1234");
         //setSize(BOARD_WIDTH, BOARD_HIGHT);
         setVisible(true);
         initComponents();
         
-        createBalls(10);
+        //createBalls(5);
         
         //balls.add(new Ball(random.nextInt(BOARD_WIDTH - Ball.r), 30, Color.RED));
         
@@ -60,82 +73,218 @@ public class NewJFrame1 extends javax.swing.JFrame {
         while(n != 0)
         {
             Random random = new Random();
-            Ball ball = new Ball((double)(random.nextInt(BOARD_WIDTH - 2 * Ball.r) + Ball.r), 
-                           (double)(random.nextInt(BOARD_HIGHT - 2*Ball.r) + Ball.r), Color.BLUE);
-            int t1 = random.nextInt(10);
-            int t2 = random.nextInt(10);
-            ball.vectorX = 1.0 + (double)(t1) / 10.0;
-            ball.vectorY = 1.0 + (double)(t2) / 10.0;
-            balls.add(ball);
+            double x = (double)(random.nextInt(BOARD_WIDTH - 2 * Ball.R) + Ball.R);
+            double y = (double)(random.nextInt(BOARD_HIGHT - 2  *Ball.R) + Ball.R);
+            Ball ball = new Ball();//, 
+            //               (double)(random.nextInt(BOARD_HIGHT - 2*Ball.R ) 
+            //) + Ball.R), Color.BLUE);
+            ball.setX(x);
+            ball.setY(y);
+            int r1 = random.nextInt(10);
+            int r2 = random.nextInt(10);
+            int r3 = 1;
+            int r4 = 1;
+            if(r1 % 2 == 1)
+                r3 = -1;
+            if(r2 % 2 == 1)
+                r4 = -1;
+            
+            ball.setVectorX((1.0 + (double)(r1) / 10.0) * r3);
+            ball.setVectorY((1.0 + (double)(r2) / 10.0) * r4);
+            //balls.add(ball);
             n--;
         }
     }
-    
+    PlayersDataBase playersDatabase = new PlayersDataBase();
+    MyPlayer myPlayer;
     private class Loop extends java.util.TimerTask 
     {
 
+//        @Override
+//        public void run() {
         @Override
         public void run() {
+            Packet packet;
             
-            for(Ball ball : balls)
+            while((packet = clientNetworkEngine.nextPacket()) != null)
             {
-                move(ball);
+
+                switch(packet.getPacketType())
+                {
+                    case MESSAGE_TO_ALL : 
+                        MessagePacket message = (MessagePacket)packet.getSubPacket();
+                        //jTextArea1.append("[" + playersDatabase.getPlayer(message.getPlayerId()).getNick()
+                        //        + "]" + message.getMessage() + "\r\n");
+                        break;
+                    case PLAYER_LOGIN :
+
+//                            Serializable o = (PlayerInfo)packet.getSubPacket();
+//                            //log(o.toString());
+//                            PlayerInfo playerInfo;
+
+                        PlayerInfo playerInfo = (PlayerInfo)packet.getSubPacket();
+                        playersDatabase.add(playerInfo);
+                        //jTextArea1.append(playerInfo.getNick() + " has been loged" + "\r\n");    
+                        break;
+                    case SYNC_PLAYER:
+                        myPlayer = (MyPlayer)packet.getSubPacket();
+                        balls.add(myPlayer);
+                        break;
+                    case MOVE_REPLY:
+                        Coordinates coordinates = (Coordinates)packet.getSubPacket();
+                        myPlayer.setX(coordinates.getX());
+                        myPlayer.setY(coordinates.getY());
+                        
+                        break;
+                    default:
+                        break;                   
+                }
             }
+            clientNetworkEngine.sendPacket(new Packet(0, PacketType.MOVE_REQUEST, new Coordinates(1,1)));
             panel.validate();
             panel.repaint();
         }
-        
-    }
-    void move(Ball ball)
-    {
-        if(ball.x + ball.vectorX + ball.width / 2 > BOARD_WIDTH)
-            ball.vectorX *= -1;
-        if(ball.x + ball.vectorX - ball.width / 2 < 0)
-            ball.vectorX *= -1;
-        if(ball.y + ball.vectorY + ball.hight / 2 > BOARD_HIGHT)
-            ball.vectorY *= -1;
-        if(ball.y + ball.vectorY - ball.hight / 2 < 0)
-            ball.vectorY *= -1;
-        ball.x += ball.vectorX;
-        ball.y += ball.vectorY;
-        
-        for(Ball ball1 : balls)
-        {
-            boolean sameHight = false, sameWidth = false;
-            if(ball == ball1)
-                continue;
-            if(ball.x == ball1.x || 
-             ((ball.x - ball.r < ball1.x + ball.r) && (ball.x - ball.r > ball1.x - ball.r)) || 
-             ((ball.x + ball.r > ball1.x - ball.r) && (ball.x + ball.r < ball1.x + ball.r)))
+//            for(Ball ball : balls)
+//            {
+//                move(ball);
+//            }
             
-                sameWidth = true;
-            if(ball.y == ball1.y || 
-             ((ball.y - ball.r < ball1.y + ball.r) && (ball.y - ball.r > ball1.y - ball.r)) || 
-             ((ball.y + ball.r > ball1.y - ball.r) && (ball.y + ball.r < ball1.y + ball.r)))
-            
-                sameHight = true;
-            if(sameHight && sameWidth)
-                ball.color = Color.GRAY;
-        }
-        
         
         
     }
+//    void move(Ball ball)
+//    {
+//        if(ball.getX() + ball.getVectorX() + ball.getR()  > BOARD_WIDTH)
+//            ball.setVectorX(ball.getVectorX() * -1);
+//        if(ball.getX() + ball.getVectorX() - ball.getR()  < 0)
+//            ball.setVectorX(ball.getVectorX() * -1);
+//        if(ball.getY() + ball.getVectorY() + ball.getR()  > BOARD_HIGHT)
+//            ball.setVectorY(ball.getVectorY() * -1);
+//        if(ball.getY() + ball.getVectorY() - ball.getR()  < 0)
+//            ball.setVectorY(ball.getVectorY() * -1);
+//        ball.setX(ball.getX() + ball.getVectorX());
+//        ball.setY(ball.getY() + ball.getVectorY());
+//        
+//        for(Ball ball1 : balls)
+//        {
+//            boolean sameHight = false, sameWidth = false;
+//            if(ball == ball1)
+//                continue;
+//            if(ball.getX() == ball1.getX() || 
+//             ((ball.getX() - ball.getR() < ball1.getX() + ball.getR()) && (ball.getX() - ball.getR() > ball1.getX() - ball.getR())) || 
+//             ((ball.getX() + ball.getR() > ball1.getX() - ball.getR()) && (ball.getX() + ball.getR() < ball1.getX() + ball.getR())))
+//            
+//                sameWidth = true;
+//            if(ball.getY() == ball1.getY() || 
+//             ((ball.getY() - ball.getR() < ball1.getY() + ball.getR()) && (ball.getY() - ball.getR() > ball1.getY() - ball.getR())) || 
+//             ((ball.getY() + ball.getR() > ball1.getY() - ball.getR()) && (ball.getY() + ball.getR() < ball1.getY() + ball.getR())))
+//            
+//                sameHight = true;
+//            if(sameHight && sameWidth)
+//                ball.setColor(Color.GRAY);
+//        }
+//        
+//        
+//        
+//    }
     public class Ball
     {
-        double x;
-        double y;
-        double vectorX = 1;
-        double vectorY = 1;
-        int width = 20;
-        int hight = 20;
-        public static final int r = 10;
-        Color color;
-        public Ball(double x, double y, Color color)
-        {
+
+        /**
+         * @return the r
+         */
+        public int getR() {
+            return r;
+        }
+
+        /**
+         * @param aR the r to set
+         */
+        public void setR(int aR) {
+            r = aR;
+        }
+        private double x;
+        private double y;
+        private double vectorX = 1;
+        private double vectorY = 1;
+        private int r = 10;
+        private Color color;
+        public static final int R = 10;
+//        public Ball(double x, double y, Color color)
+//        {
+//            this.x = x;
+//            this.y = y;
+//            this.color =  color;
+//        }
+
+        /**
+         * @return the x
+         */
+        public double getX() {
+            return x;
+        }
+
+        /**
+         * @param x the x to set
+         */
+        public void setX(double x) {
             this.x = x;
+        }
+
+        /**
+         * @return the y
+         */
+        public double getY() {
+            return y;
+        }
+
+        /**
+         * @param y the y to set
+         */
+        public void setY(double y) {
             this.y = y;
-            this.color =  color;
+        }
+
+        /**
+         * @return the vectorX
+         */
+        public double getVectorX() {
+            return vectorX;
+        }
+
+        /**
+         * @param vectorX the vectorX to set
+         */
+        public void setVectorX(double vectorX) {
+            this.vectorX = vectorX;
+        }
+
+        /**
+         * @return the vectorY
+         */
+        public double getVectorY() {
+            return vectorY;
+        }
+
+        /**
+         * @param vectorY the vectorY to set
+         */
+        public void setVectorY(double vectorY) {
+            this.vectorY = vectorY;
+        }
+
+        /**
+         * @return the color
+         */
+        public Color getColor() {
+            return color;
+        }
+
+        /**
+         * @param color the color to set
+         */
+        public void setColor(Color color) {
+            this.color = color;
         }
     }
     /**

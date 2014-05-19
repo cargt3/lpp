@@ -26,6 +26,8 @@ public class PlayersDatabase {
         //database.add(new PlayerPassword("bb"  , "1234"));
         int id = 0;
         MyPlayer player1 = new MyPlayer("aaa", id++);
+        player1.setX(50);
+        player1.setY(50);
         database.put(player1, "1234");
         MyPlayer player2 = new MyPlayer("bb", id++);
         database.put(player2, "1234");

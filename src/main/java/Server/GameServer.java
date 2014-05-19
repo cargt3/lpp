@@ -6,6 +6,7 @@
 
 package Server;
 
+import Player.Coordinates;
 import Player.MyPlayer;
 import Player.PlayerInfo;
 import Player.PlayersDatabase;
@@ -15,6 +16,8 @@ import Protocol.Packet;
 import Protocol.Protocol;
 import Protocol.Protocol.PacketType;
 import io.netty.channel.Channel;
+import java.awt.Point;
+import java.awt.geom.Point2D;
 import static java.lang.Thread.sleep;
 import java.util.ArrayList;
 import java.util.Date;
@@ -129,6 +132,34 @@ public class GameServer {
         
     }
     
+    private Coordinates move(MyPlayer myPlayer, Coordinates point)
+    {
+        int BOARD_WIDTH = 600;
+        int BOARD_HIGHT = 400;
+        
+        if(myPlayer.getX() + myPlayer.getVectorX() + myPlayer.getR()  > BOARD_WIDTH)
+            myPlayer.setVectorX(myPlayer.getVectorX() * -1);
+        if(myPlayer.getX() + myPlayer.getVectorX() - myPlayer.getR()  < 0)
+            myPlayer.setVectorX(myPlayer.getVectorX() * -1);
+        if(myPlayer.getY() + myPlayer.getVectorY() + myPlayer.getR()  > BOARD_HIGHT)
+            myPlayer.setVectorY(myPlayer.getVectorY() * -1);
+        if(myPlayer.getY() + myPlayer.getVectorY() - myPlayer.getR()  < 0)
+            myPlayer.setVectorY(myPlayer.getVectorY() * -1);
+        myPlayer.setX(myPlayer.getX() + myPlayer.getVectorX());
+        myPlayer.setY(myPlayer.getY() + myPlayer.getVectorY());
+        
+        Coordinates coordinate = new Coordinates(myPlayer.getX(), myPlayer.getY());
+        
+        return coordinate;
+    }
+    
+    public void moveRequest(Channel channel, Packet packet)
+    {
+        MyPlayer myPlayer = loged.get(channel);
+        Coordinates coordinate = move(myPlayer, (Coordinates)packet.getSubPacket());
+        channel.writeAndFlush(new Packet(0, PacketType.MOVE_REPLY, coordinate));
+    }
+    
     public void LoginPlayer(Channel channel, Packet packet)
     {
         int i = connectedPlayers.indexOf(new ConnectedPlayer(channel, null));
@@ -159,6 +190,9 @@ public class GameServer {
             }
             loged.put(channel, player);
             channel.writeAndFlush((new Packet(packet.getSeq(), Protocol.PacketType.LOGIN_SUCCESS, "")));
+            channel.writeAndFlush(new Packet(0,PacketType.BEGIN_SYNC,null));
+            channel.writeAndFlush(new Packet(0,PacketType.SYNC_PLAYER, player));
+            channel.writeAndFlush(new Packet(0,PacketType.END_SYNC,null));
             syncWithPlayer(channel);
             for(Channel logedChannel : loged.keySet())
             {

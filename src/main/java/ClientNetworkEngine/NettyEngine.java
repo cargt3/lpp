@@ -120,12 +120,17 @@ public class NettyEngine {
 //            lock.unlock();
 //        }
 //        
-        
-       while(start + MAX_WAIT_TIME * 1000 > System.currentTimeMillis())
+       int waitTime = MAX_WAIT_TIME;
+       if(seq == 0)
+           waitTime = 0;
+       long temp = System.currentTimeMillis();
+       while(start + waitTime * 1000 >= System.currentTimeMillis())
        {
             Packet packet;
             try {
-                packet = queue.poll(1, TimeUnit.SECONDS);
+                packet = queue.poll(1, TimeUnit.MILLISECONDS);
+                //packet = queue.take();
+                
             } catch (InterruptedException ex) {
                 return null;
             }
@@ -149,5 +154,10 @@ public class NettyEngine {
         Packet packetToSend = new Packet(seq++, packetType, o);
         channel.writeAndFlush(packetToSend);
         return seq - 1;
+    }
+    
+    public void sendPacket(Packet packet)
+    {
+        channel.writeAndFlush(packet);
     }
 }

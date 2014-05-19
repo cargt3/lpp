@@ -53,6 +53,11 @@ public class ClientNetworkEngine {
         netty.sendPacket(PacketType.MESSAGE_TO_ALL, new MessagePacket(message, 0));
     }
     
+    public void sendPacket(Packet packet)
+    {
+        netty.sendPacket(packet);
+    }
+    
     public Packet LogIn(String nick, String password)
     { 
  
