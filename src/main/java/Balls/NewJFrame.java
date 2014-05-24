@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package Test;
+package Balls;
 
 import ClientNetworkEngine.ClientNetworkEngine;
 import Protocol.Packet;
@@ -12,7 +12,7 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import Protocol.Protocol;
-import static Test.NewJFrame.clientNetworkEngine;
+import Test.NewJPanel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 /**
@@ -126,7 +126,7 @@ public class NewJFrame extends javax.swing.JFrame {
     
     private void startChatWindow()
     {
-        NewJPanel displayPanel = new NewJPanel(clientNetworkEngine); 
+        NewJPanel2 displayPanel = new NewJPanel2(clientNetworkEngine); 
         JFrame displayFrame = new JFrame("Hello"); 
         displayFrame.getContentPane().add(displayPanel, BorderLayout.CENTER); 
         displayFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); 

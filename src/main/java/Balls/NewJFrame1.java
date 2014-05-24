@@ -42,14 +42,15 @@ public class NewJFrame1 extends javax.swing.JFrame {
     
     static ClientNetworkEngine clientNetworkEngine = new ClientNetworkEngine("localhost",8000);
     
+    static PlayersDataBase playersDatabase = new PlayersDataBase();
     List<Player> balls = new ArrayList<>();
     
-    JPanel panel = new game(balls);
+    JPanel panel = new game(playersDatabase);
     
     public NewJFrame1() {
         super("Rysowanie");
         
- 
+        
         add(panel);
         setPreferredSize(new Dimension(WINDOW_WIDTH,WINDOW_HIGHT));
         pack();
@@ -95,7 +96,7 @@ public class NewJFrame1 extends javax.swing.JFrame {
             n--;
         }
     }
-    PlayersDataBase playersDatabase = new PlayersDataBase();
+    
     MyPlayer myPlayer;
     private class Loop extends java.util.TimerTask 
     {
@@ -124,6 +125,7 @@ public class NewJFrame1 extends javax.swing.JFrame {
 
                         PlayerInfo playerInfo = (PlayerInfo)packet.getSubPacket();
                         playersDatabase.add(playerInfo);
+                        //myPlayer = (MyPlayer)packet.getSubPacket();
                         //jTextArea1.append(playerInfo.getNick() + " has been loged" + "\r\n");    
                         break;
                     case SYNC_PLAYER:
@@ -134,6 +136,9 @@ public class NewJFrame1 extends javax.swing.JFrame {
                         Coordinates coordinates = (Coordinates)packet.getSubPacket();
                         myPlayer.setX(coordinates.getX());
                         myPlayer.setY(coordinates.getY());
+                        playerInfo = playersDatabase.getPlayer(myPlayer.getId());
+                        playerInfo.setX(coordinates.getX());
+                        playerInfo.setY(coordinates.getY());
                         
                         break;
                     default:

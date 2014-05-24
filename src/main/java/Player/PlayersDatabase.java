@@ -30,6 +30,8 @@ public class PlayersDatabase {
         player1.setY(50);
         database.put(player1, "1234");
         MyPlayer player2 = new MyPlayer("bb", id++);
+        player2.setX(100);
+        player2.setY(100);
         database.put(player2, "1234");
     }
     

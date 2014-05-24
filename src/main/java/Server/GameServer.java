@@ -194,11 +194,11 @@ public class GameServer {
             channel.writeAndFlush(new Packet(0,PacketType.SYNC_PLAYER, player));
             channel.writeAndFlush(new Packet(0,PacketType.END_SYNC,null));
             syncWithPlayer(channel);
-            for(Channel logedChannel : loged.keySet())
-            {
-                PlayerInfo playerinfo = new PlayerInfo(player.getNick(), player.getId());
-                logedChannel.writeAndFlush(new Packet(0, PacketType.PLAYER_LOGIN,playerinfo));
-            }
+//            for(Channel logedChannel : loged.keySet())
+//            {
+//                PlayerInfo playerinfo = new PlayerInfo(player.getNick(), player.getId());
+//                logedChannel.writeAndFlush(new Packet(0, PacketType.PLAYER_LOGIN,playerinfo));
+//            }
             log("User successfully loged: " + player.getNick());
 
         }        

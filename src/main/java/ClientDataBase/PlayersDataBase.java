@@ -11,6 +11,7 @@ import Player.PlayerInfo;
 import io.netty.channel.Channel;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,13 +19,14 @@ import java.util.Map;
  *
  * @author Karol
  */
-public class PlayersDataBase //loged players
+public class PlayersDataBase implements Iterable //loged players
 {
     //HashMap<Integer, String> players = new HashMap<>();
     List<PlayerInfo> players = new ArrayList<>();
     
     public void add(PlayerInfo player)
     {
+       
         players.add(player);
     }
     
@@ -32,6 +34,7 @@ public class PlayersDataBase //loged players
     {
         players.remove(player);
     }
+    
   
     public PlayerInfo getPlayer(int id)
     {
@@ -42,6 +45,13 @@ public class PlayersDataBase //loged players
         }
         return null;
     }
+
+    @Override
+    public Iterator iterator() {
+         return players.iterator();
+    }
+    
+    
     
     
 }
