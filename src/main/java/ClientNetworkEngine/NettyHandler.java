@@ -60,8 +60,8 @@ public class NettyHandler extends SimpleChannelInboundHandler//<String>
             }
         }
         queue.put(packet);
-
-        log(packet.toString());
+        if(packet.getPacketType() != PacketType.SYNC_PLAYER)
+            log(packet.toString());
     }    
     
     private void log(String str)

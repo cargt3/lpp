@@ -6,6 +6,7 @@
 
 package ClientNetworkEngine;
 
+import Player.MainPlayer;
 import Protocol.LoginPacket;
 import Protocol.MessagePacket;
 import Protocol.Packet;
@@ -29,6 +30,9 @@ public class ClientNetworkEngine {
 //        this.host = host;
 //        this.port = port;
     }
+    
+    boolean loged = false;
+    MainPlayer mainPlayer;
     
     public void disconnect()
     {
@@ -65,6 +69,13 @@ public class ClientNetworkEngine {
         int seq = netty.sendPacket(PacketType.LOGIN_REQUEST,new LoginPacket(nick, password));
         
         Packet receivedPacket = netty.getPacket(seq);
+        
+        if(receivedPacket.getPacketType() == PacketType.LOGOUT_SUCCES)
+        {
+            loged = true;
+            mainPlayer = (MainPlayer)receivedPacket.getSubPacket();
+        }
+        
         return receivedPacket;
 //        if(receivedPacket != null)
 //            return receivedPacket.getPacketType();

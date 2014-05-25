@@ -10,7 +10,7 @@ package Player;
  *
  * @author Karol
  */
-public class MyPlayer extends Player
+public class MainPlayer extends Player
     {
 //        protected final String nick;
 //        //private final String password;  
@@ -23,7 +23,7 @@ public class MyPlayer extends Player
             return new Player(nick,id);
         }
     
-        public MyPlayer(String nick, int id)
+        public MainPlayer(String nick, int id)
         {
             super(nick, id);
             //this.nick = nick;
@@ -56,9 +56,9 @@ public class MyPlayer extends Player
 //        @Override 
 //        public boolean equals(Object o)
 //        {
-//            if(o instanceof MyPlayer)
+//            if(o instanceof MainPlayer)
 //            {
-//                if(this.id == ((MyPlayer)o).id)
+//                if(this.id == ((MainPlayer)o).id)
 //                    return true;
 //            }
 //            return false;

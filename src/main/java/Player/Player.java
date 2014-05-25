@@ -56,9 +56,9 @@ public class Player implements Serializable
         @Override 
         public boolean equals(Object o)
         {
-            if(o instanceof MyPlayer)
+            //if(o instanceof MainPlayer)
             {
-                if(this.id == ((MyPlayer)o).id)
+                if(this.id == ((Player)o).id)
                     return true;
             }
             return false;

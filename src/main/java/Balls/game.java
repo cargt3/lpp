@@ -6,9 +6,9 @@
 
 package Balls;
 
-import Balls.NewJFrame1.Ball;
-import static Balls.NewJFrame1.BOARD_HIGHT;
-import static Balls.NewJFrame1.BOARD_WIDTH;
+//import Balls.NewJFrame1.Ball;
+import static Balls.NewJPanel2.BOARD_HIGHT;
+import static Balls.NewJPanel2.BOARD_WIDTH;
 import ClientDataBase.PlayersDataBase;
 import Player.Player;
 import Player.PlayerInfo;
@@ -46,11 +46,12 @@ public class game extends javax.swing.JPanel {
         super.paintComponent(g);               
         Graphics2D g2d = (Graphics2D) g;
         
-        g2d.drawRect(0, 0, NewJFrame1.BOARD_WIDTH, NewJFrame1.BOARD_HIGHT);
+        //g2d.drawRect(0, 0, NewJPanel2.BOARD_WIDTH, NewJPanel2.BOARD_HIGHT);
         for(Object obj : playersDatabase)
         {
             PlayerInfo ball = (PlayerInfo)obj;
             
+            //g2d.drawRect((int)(ball.getX() - (ball.getR() / 2)), (int)(ball.getY() - ball.getR() / 2), ball.getR() * 2 , ball.getR() * 2);
             g2d.setColor(ball.getColor());
             g2d.fillOval((int)(ball.getX() - (ball.getR() / 2)), (int)(ball.getY() - ball.getR() / 2), ball.getR() * 2 , ball.getR() * 2);
         }

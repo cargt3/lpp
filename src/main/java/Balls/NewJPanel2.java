@@ -6,16 +6,17 @@
 
 package Balls;
 
-import static Balls.NewJFrame1.WINDOW_WIDTH;
+//import static Balls.NewJFrame1.WINDOW_WIDTH;
 import ClientDataBase.PlayersDataBase;
 import ClientNetworkEngine.ClientNetworkEngine;
 import Player.Coordinates;
-import Player.MyPlayer;
+import Player.MainPlayer;
 import Player.Player;
 import Player.PlayerInfo;
 import Protocol.MessagePacket;
 import Protocol.Packet;
 import Protocol.Protocol;
+import Protocol.SyncPacket;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,16 +29,16 @@ import javax.swing.JPanel;
  * @author Karol
  */
 public class NewJPanel2 extends javax.swing.JPanel {
-    int GAME_SPEED = 1;
+    int GAME_SPEED = 10;
     static final int BOARD_WIDTH = 600;
     static final int BOARD_HIGHT = 400;
     static final int WINDOW_WIDTH = BOARD_WIDTH + 100;
     static final int WINDOW_HIGHT = BOARD_HIGHT + 50;
     
-    static ClientNetworkEngine clientNetworkEngine = new ClientNetworkEngine("localhost",8000);
+    ClientNetworkEngine clientNetworkEngine;
     
     PlayersDataBase playersDatabase = new PlayersDataBase();
-    //List<Player> balls = new ArrayList<>();
+    MainPlayer mainPlayer;
     
     JPanel panel = new game(playersDatabase);
     /**
@@ -45,20 +46,14 @@ public class NewJPanel2 extends javax.swing.JPanel {
      */
     public NewJPanel2(ClientNetworkEngine clientNetworkEngine) {
         //initComponents();
-        NewJPanel2.clientNetworkEngine = clientNetworkEngine;
+        this.clientNetworkEngine = clientNetworkEngine;
         add(panel);
         setPreferredSize(new Dimension(WINDOW_WIDTH,WINDOW_HIGHT));
         //pack();
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        //clientNetworkEngine.LogIn("aaa", "1234");
+
         //setSize(BOARD_WIDTH, BOARD_HIGHT);
         setVisible(true);
-        //initComponents();
-        
-        //createBalls(5);
-        
-        //balls.add(new Ball(random.nextInt(BOARD_WIDTH - Ball.r), 30, Color.RED));
+
         
         Timer timer = new Timer();
         timer.schedule(new Loop(), 0, GAME_SPEED);
@@ -66,7 +61,7 @@ public class NewJPanel2 extends javax.swing.JPanel {
 
     
     
-    MyPlayer myPlayer;
+    
     private class Loop extends java.util.TimerTask 
     {
 
@@ -94,22 +89,36 @@ public class NewJPanel2 extends javax.swing.JPanel {
 
                         PlayerInfo playerInfo = (PlayerInfo)packet.getSubPacket();
                         playersDatabase.add(playerInfo);
-                        //myPlayer = (MyPlayer)packet.getSubPacket();
+                        //myPlayer = (MainPlayer)packet.getSubPacket();
                         //jTextArea1.append(playerInfo.getNick() + " has been loged" + "\r\n");    
                         break;
                     case SYNC_PLAYER:
-                        myPlayer = (MyPlayer)packet.getSubPacket();
-                        //balls.add(myPlayer);
+                        SyncPacket syncPacket = (SyncPacket)packet.getSubPacket();
+                        switch(syncPacket.getPacketId())
+                        {
+                            case COORDINATES :
+                                Coordinates coordinates = (Coordinates)syncPacket.getSubPacket();
+                                PlayerInfo playerInfo1 = playersDatabase.getPlayer(syncPacket.getPlayerId());
+                                playerInfo1.setX(coordinates.getX());
+                                playerInfo1.setY(coordinates.getY());
+                                break;
+                        }
                         break;
-                    case MOVE_REPLY:
-                        Coordinates coordinates = (Coordinates)packet.getSubPacket();
-                        myPlayer.setX(coordinates.getX());
-                        myPlayer.setY(coordinates.getY());
-                        playerInfo = playersDatabase.getPlayer(myPlayer.getId());
-                        playerInfo.setX(coordinates.getX());
-                        playerInfo.setY(coordinates.getY());
-                        
+                    case PLAYER_LOGOUT :
+                        int id = (int)packet.getSubPacket();
+                        playersDatabase.remove(playersDatabase.getPlayer(id));
+                        //mainPlayer = (MainPlayer)packet.getSubPacket();
+                        //balls.add(mainPlayer);
                         break;
+//                    case MOVE_REPLY:
+//                        Coordinates coordinates = (Coordinates)packet.getSubPacket();
+//                        mainPlayer.setX(coordinates.getX());
+//                        mainPlayer.setY(coordinates.getY());
+//                        playerInfo = playersDatabase.getPlayer(mainPlayer.getId());
+//                        playerInfo.setX(coordinates.getX());
+//                        playerInfo.setY(coordinates.getY());
+//                        
+//                        break;
                     default:
                         break;                   
                 }
@@ -128,19 +137,51 @@ public class NewJPanel2 extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jTextField1 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        jTextField1.setText("jTextField1");
+
+        jButton1.setText("jButton1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(486, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

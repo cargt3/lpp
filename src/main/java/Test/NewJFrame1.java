@@ -4,12 +4,13 @@
  * and open the template in the editor.
  */
 
-package Balls;
+package Test;
 
+import Balls.game;
 import ClientDataBase.PlayersDataBase;
 import ClientNetworkEngine.ClientNetworkEngine;
 import Player.Coordinates;
-import Player.MyPlayer;
+import Player.MainPlayer;
 import Player.Player;
 import Player.PlayerInfo;
 import Protocol.MessagePacket;
@@ -97,7 +98,7 @@ public class NewJFrame1 extends javax.swing.JFrame {
         }
     }
     
-    MyPlayer myPlayer;
+    MainPlayer myPlayer;
     private class Loop extends java.util.TimerTask 
     {
 
@@ -125,11 +126,11 @@ public class NewJFrame1 extends javax.swing.JFrame {
 
                         PlayerInfo playerInfo = (PlayerInfo)packet.getSubPacket();
                         playersDatabase.add(playerInfo);
-                        //myPlayer = (MyPlayer)packet.getSubPacket();
+                        //myPlayer = (MainPlayer)packet.getSubPacket();
                         //jTextArea1.append(playerInfo.getNick() + " has been loged" + "\r\n");    
                         break;
                     case SYNC_PLAYER:
-                        myPlayer = (MyPlayer)packet.getSubPacket();
+                        myPlayer = (MainPlayer)packet.getSubPacket();
                         balls.add(myPlayer);
                         break;
                     case MOVE_REPLY:

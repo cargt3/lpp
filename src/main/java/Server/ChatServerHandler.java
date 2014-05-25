@@ -10,8 +10,10 @@ package Server;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import Player.MyPlayer;
+import Player.MainPlayer;
 import Protocol.Packet;
+import Protocol.Protocol;
+import Protocol.Protocol.PacketType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,14 +26,14 @@ import java.util.concurrent.BlockingQueue;
 public class ChatServerHandler extends SimpleChannelInboundHandler//<String>
 {
 
-    private final HashMap<Channel, MyPlayer> loged;// = new HashMap<Channel, MyPlayer>() {};
+    private final HashMap<Channel, MainPlayer> loged;// = new HashMap<Channel, MainPlayer>() {};
     private final List<ConnectedPlayer> connectedPlayers;// = new ArrayList<>();
     private final GameServer gameServer;
     
     //GameServer gameServer = new GameServer(loged, connectedPlayers);
     BlockingQueue<Pair> packetQueue; 
     
-    public ChatServerHandler(BlockingQueue<Pair> packetQueue, HashMap<Channel, MyPlayer> loged,
+    public ChatServerHandler(BlockingQueue<Pair> packetQueue, HashMap<Channel, MainPlayer> loged,
                             List<ConnectedPlayer> connectedPlayers, GameServer gameServer)
     {
         this.packetQueue = packetQueue;
@@ -69,7 +71,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler//<String>
     }
     
     @Override
-    public void handlerRemoved(ChannelHandlerContext ctx)
+    public void handlerRemoved(ChannelHandlerContext ctx) throws InterruptedException
     {
         Channel incoming = ctx.channel();
         synchronized(connectedPlayers)
@@ -77,7 +79,9 @@ public class ChatServerHandler extends SimpleChannelInboundHandler//<String>
             connectedPlayers.remove(new ConnectedPlayer(incoming, null));
         }
         if(gameServer.isLoged(incoming))
-            gameServer.forceLogoutPlayer(incoming, null);
+            //gameServer.forceLogoutPlayer(incoming, null);
+            //gameServer.LogoutPlayer(incoming, null);
+            packetQueue.put(new Pair(new Packet(-1, PacketType.LOGOUT_REQUEST, ""), ctx.channel()));
         log("Disconnected" + incoming.remoteAddress());
     }
    

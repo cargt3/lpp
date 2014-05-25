@@ -51,7 +51,8 @@ public class QueueThreat implements Runnable {
             Channel channel = pair.getChannel();
             
             //Channel incoming = ctx.channel();
-            log(channel.remoteAddress() + ": " + packet.toString());
+            if(packet.getPacketType() != PacketType.MOVE_REQUEST)
+                log(channel.remoteAddress() + ": " + packet.toString());
             
             if(!gameServer.isLoged(channel) )
             {
@@ -70,6 +71,9 @@ public class QueueThreat implements Runnable {
                     break;
                 case LOGIN_REQUEST :
                     gameServer.LoginPlayer(channel, packet);
+                    break;
+                case LOGOUT_REQUEST :
+                    gameServer.LogoutPlayer(channel, packet);
                     break;
                 case PING :
                     log("Ping");

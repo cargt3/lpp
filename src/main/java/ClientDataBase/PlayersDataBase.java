@@ -6,7 +6,7 @@
 
 package ClientDataBase;
 
-import Player.MyPlayer;
+import Player.MainPlayer;
 import Player.PlayerInfo;
 import io.netty.channel.Channel;
 import java.util.ArrayList;
