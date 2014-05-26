@@ -37,7 +37,7 @@ public class SyncPacket implements Serializable {
     public PacketId getPacketId() {
         return packetId;
     }
-    public enum PacketId {COORDINATES}
+    public enum PacketId {COORDINATES, HIT_COUNT}
     public SyncPacket(Serializable subPacket, int playerId, PacketId packetId)
     {
         this.playerId = playerId;

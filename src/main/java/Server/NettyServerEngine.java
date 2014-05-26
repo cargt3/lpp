@@ -59,7 +59,7 @@ public class NettyServerEngine {
             ServerBootstrap bootstrap = new ServerBootstrap()
                     .group(boosGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler( new ChatServerInitializer(packetQueue, loged, 
+                    .childHandler( new ServerInitializer(packetQueue, loged, 
                                   connectedPlayers, gameServer));
             bootstrap.bind(port).sync().channel().closeFuture().sync();
         }

@@ -20,6 +20,10 @@ public class Player implements Serializable
         protected  int id; //!!!!!!!!! TODO unikalny
         //private static int idNext = 0; 
         
+        private int hitCount = 0;
+        
+        private Coordinates coordinates;
+        
         public Player()
         {
             
@@ -37,10 +41,6 @@ public class Player implements Serializable
             return nick;
         }
         
-//        public String getPassword()
-//        {
-//            return password;
-//        }
         
         public int getId()
         {
@@ -158,5 +158,33 @@ public class Player implements Serializable
      */
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    /**
+     * @return the coordinates
+     */
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    /**
+     * @param coordinates the coordinates to set
+     */
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    /**
+     * @return the hitCount
+     */
+    public int getHitCount() {
+        return hitCount;
+    }
+
+    /**
+     * @param hitCount the hitCount to set
+     */
+    public void setHitCount(int hitCount) {
+        this.hitCount = hitCount;
     }
     }

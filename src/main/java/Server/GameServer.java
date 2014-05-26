@@ -17,6 +17,7 @@ import Protocol.Protocol;
 import Protocol.Protocol.PacketType;
 import Protocol.SyncPacket;
 import io.netty.channel.Channel;
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
@@ -185,10 +186,47 @@ public class GameServer {
         return coordinate;
     }
     
+    private void checkCollision(MainPlayer player)
+    {
+        for(MainPlayer playerToCheck : loged.values())
+        {
+            boolean sameHight = false, sameWidth = false;
+            if(player == playerToCheck)
+                continue;
+            if(player.getX() == playerToCheck.getX() || 
+             ((player.getX() - player.getR() < playerToCheck.getX() + player.getR()) && (player.getX() - player.getR() > playerToCheck.getX() - player.getR())) || 
+             ((player.getX() + player.getR() > playerToCheck.getX() - player.getR()) && (player.getX() + player.getR() < playerToCheck.getX() + player.getR())))
+            
+                sameWidth = true;
+            if(player.getY() == playerToCheck.getY() || 
+             ((player.getY() - player.getR() < playerToCheck.getY() + player.getR()) && (player.getY() - player.getR() > playerToCheck.getY() - player.getR())) || 
+             ((player.getY() + player.getR() > playerToCheck.getY() - player.getR()) && (player.getY() + player.getR() < playerToCheck.getY() + player.getR())))
+            
+                sameHight = true;
+            if(sameHight && sameWidth) //Collision
+            {
+                //player.setColor(Color.GRAY);
+                player.setHitCount(player.getHitCount() + 1);
+                Channel playerChannel = getKeyByValue(loged, player);
+                playerChannel.writeAndFlush(new Packet(0, PacketType.SYNC_PLAYER, 
+                        new SyncPacket( player.getHitCount(), player.getId(), SyncPacket.PacketId.HIT_COUNT)));
+                //Channel playerToCheckChannel = getKeyByValue(loged, playerToCheck);
+                //playerToCheckChannel.writeAndFlush(new Packet(0, PacketType.SYNC_PLAYER, 
+                //        new SyncPacket( playerToCheck.getHitCount() + 1, playerToCheck.getId(), SyncPacket.PacketId.HIT_COUNT)));
+            }
+        }
+        
+        
+        
+    
+    }
+    
     public void moveRequest(Channel channel, Packet packet)
     {
         MainPlayer mainPlayer = loged.get(channel);
         Coordinates coordinate = move(mainPlayer, (Coordinates)packet.getSubPacket());
+        mainPlayer.setCoordinates(coordinate);
+        checkCollision(mainPlayer);
         for (Channel channelToSync : loged.keySet()) 
         {
            

@@ -69,8 +69,8 @@ public class PlayersDatabase {
             if(r2 % 2 == 1)
                 r4 = -1;
             
-            player.setVectorX((4.0 + (double)(r1) / 10.0) * r3);
-            player.setVectorY((4.0 + (double)(r2) / 10.0) * r4);
+            player.setVectorX((4.0 + (double)(r1) / 2.0) * r3);
+            player.setVectorY((4.0 + (double)(r2) / 2.0) * r4);
             return player;
             //balls.add(player);
             //n--;

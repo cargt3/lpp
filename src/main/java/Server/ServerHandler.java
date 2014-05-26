@@ -23,7 +23,7 @@ import java.util.concurrent.BlockingQueue;
 
 
 
-public class ChatServerHandler extends SimpleChannelInboundHandler//<String>
+public class ServerHandler extends SimpleChannelInboundHandler//<String>
 {
 
     private final HashMap<Channel, MainPlayer> loged;// = new HashMap<Channel, MainPlayer>() {};
@@ -33,7 +33,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler//<String>
     //GameServer gameServer = new GameServer(loged, connectedPlayers);
     BlockingQueue<Pair> packetQueue; 
     
-    public ChatServerHandler(BlockingQueue<Pair> packetQueue, HashMap<Channel, MainPlayer> loged,
+    public ServerHandler(BlockingQueue<Pair> packetQueue, HashMap<Channel, MainPlayer> loged,
                             List<ConnectedPlayer> connectedPlayers, GameServer gameServer)
     {
         this.packetQueue = packetQueue;

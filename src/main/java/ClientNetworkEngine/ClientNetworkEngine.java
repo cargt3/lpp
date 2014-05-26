@@ -32,7 +32,7 @@ public class ClientNetworkEngine {
     }
     
     boolean loged = false;
-    MainPlayer mainPlayer;
+    private MainPlayer mainPlayer;
     
     public void disconnect()
     {
@@ -70,7 +70,7 @@ public class ClientNetworkEngine {
         
         Packet receivedPacket = netty.getPacket(seq);
         
-        if(receivedPacket.getPacketType() == PacketType.LOGOUT_SUCCES)
+        if(receivedPacket.getPacketType() == PacketType.LOGIN_SUCCESS)
         {
             loged = true;
             mainPlayer = (MainPlayer)receivedPacket.getSubPacket();
@@ -81,5 +81,12 @@ public class ClientNetworkEngine {
 //            return receivedPacket.getPacketType();
 //        else
 //            return PacketType.ERROR;
+    }
+
+    /**
+     * @return the mainPlayer
+     */
+    public MainPlayer getMainPlayer() {
+        return mainPlayer;
     }
 }
